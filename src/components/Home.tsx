@@ -1,51 +1,67 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
-import { openDatabase, executeSql, initDatabase, } from '../utils/SQLiteHelper';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button, View, Text, ActivityIndicator } from 'react-native';
+import { openDatabase, executeSql, initDatabase } from '../utils/SQLiteHelper';
 
-const PoemComponent: React.FC = () => {
+const usePoemWithTags = () => {
     const [poem, setPoem] = useState<any>();
-    const [id, setId] = useState<number>(0);
+    const [tags, setTags] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchPoemWithTags = useCallback(async () => {
+        setLoading(true);
+        try {
+            const poemResults = await executeSql("SELECT * FROM Poems ORDER BY RANDOM() LIMIT 1");
+            const poem = poemResults.rows.item(0);
+            setPoem(poem);
+
+            const tagIdsResults = await executeSql("SELECT tag_id FROM Poet_Tags WHERE poet_id = ?", [poem.id]);
+            const tagIds = tagIdsResults.rows.raw().map(row => row.tag_id);
+
+            const tagsResults = await executeSql(`SELECT * FROM Tags WHERE id IN (${tagIds.join(',')})`);
+            const tags = tagsResults.rows.raw();
+            setTags(tags);
+
+            setLoading(false);
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
+    }, []);
+
     useEffect(() => {
-        // 打开数据库
         openDatabase();
         initDatabase();
+        fetchPoemWithTags();
+    }, [fetchPoemWithTags]);
 
-
-        // 1 to 1000, random
-        const num = Math.floor(Math.random() * 1000) + 1
-        console.log('num', num);
-        setId(num);
-
-
-
-        // 执行 SQL 语句
-        executeSql("SELECT * FROM Poems WHERE id = ?", [num]).then((results) => {
-            console.log('results', results);
-            const len = results.rows.length;
-            console.log('len', len);
-            setPoem(results.rows.item(0));
-        }).catch((err) => {
-            console.log(err);
-        });
+    return { poem, tags, loading, fetchPoemWithTags };
+};
 
 
 
+const PoemComponent: React.FC = () => {
+    const { poem, tags, fetchPoemWithTags } = usePoemWithTags();
 
-        // // 关闭数据库
-        // return () => {
-        //     closeDatabase();
-        // };
-    }, []);
 
     return (
         <View>
             <Text>Poem</Text>
-            <Text>{poem && poem.id}</Text>
-            <Text>{poem && poem.title}</Text>
-            <Text>{poem && poem.author}</Text>
-            <Text>{poem && poem.content}</Text>
+            {poem && (
+                <>
+                    <Text>{poem.id}</Text>
+                    <Text>{poem.title}</Text>
+                    {poem.author && <Text>{poem.author}</Text>}
+                    {poem.chapter && poem.section && <Text>{poem.chapter} {poem.section}</Text>}
+                    <Text>{poem.content}</Text>
+                </>
+            )}
+            {tags.map(tag => (
+                <Text key={tag.id}>{tag.tag}</Text>
+            ))}
+            <Button title="Load new poem" onPress={fetchPoemWithTags} />
         </View>
     );
 };
+
 
 export default PoemComponent;
