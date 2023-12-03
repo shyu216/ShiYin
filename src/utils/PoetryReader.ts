@@ -92,18 +92,22 @@ class Poem extends BaseItem {
     }
 }
 
-import RNFS from 'react-native-fs';
+import { SQLiteDatabase } from 'react-native-sqlite-storage';
 
 function processParagraphs(paragraphs: string[]): string {
     // Implement this function based on your Python version
     return paragraphs.join('\n');
 }
 
-async function handleCi(pathCi: string): Promise<Ci[]> {
-    console.log(`handle ${pathCi}`);
-    const ci = JSON.parse(await RNFS.readFile(pathCi, 'utf8'));
-    const lst: Ci[] = [];
 
+import ci from './../assets/chinese-poetry/宋词/宋词三百首.json';
+import shijing from './../assets/chinese-poetry/诗经/shijing.json';
+import nalan from './../assets/chinese-poetry/纳兰性德/纳兰性德诗集.json';
+import poem from './../assets/chinese-poetry/全唐诗/唐诗三百首.json';
+
+async function handleCi(): Promise<Ci[]> {
+    // console.log(`handle ${ci}`);
+    const lst: Ci[] = [];
     for (const item of ci) {
         const author = item['author'];
         const rhythmic = item['rhythmic'];
@@ -114,9 +118,8 @@ async function handleCi(pathCi: string): Promise<Ci[]> {
     return lst;
 }
 
-async function handleShijing(pathShijing: string): Promise<ShiJing[]> {
-    console.log(`handle ${pathShijing}`);
-    const shijing = JSON.parse(await RNFS.readFile(pathShijing, 'utf8'));
+async function handleShijing(): Promise<ShiJing[]> {
+    // console.log(`handle ${shijing}`);
     const lst: ShiJing[] = [];
 
     for (const item of shijing) {
@@ -129,9 +132,8 @@ async function handleShijing(pathShijing: string): Promise<ShiJing[]> {
     return lst;
 }
 
-async function handleNalan(pathNalan: string): Promise<Nalan[]> {
-    console.log(`handle ${pathNalan}`);
-    const nalan = JSON.parse(await RNFS.readFile(pathNalan, 'utf8'));
+async function handleNalan(): Promise<Nalan[]> {
+    // console.log(`handle ${nalan}`);
     const lst: Nalan[] = [];
 
     for (const item of nalan) {
@@ -143,9 +145,8 @@ async function handleNalan(pathNalan: string): Promise<Nalan[]> {
     return lst;
 }
 
-async function handlePoem(pathPoem: string): Promise<Poem[]> {
-    console.log(`handle ${pathPoem}`);
-    const poem = JSON.parse(await RNFS.readFile(pathPoem, 'utf8'));
+async function handlePoem(): Promise<Poem[]> {
+    // console.log(`handle ${poem}`);
     const lst: Poem[] = [];
 
     for (const item of poem) {
@@ -158,42 +159,64 @@ async function handlePoem(pathPoem: string): Promise<Poem[]> {
     return lst;
 }
 
-export async function readPoems() {
-    const pathCi = '../chinese-poetry/宋词/宋词三百首.json';
-    const pathShijing = '../chinese-poetry/诗经/shijing.json';
-    const pathNalan = '../chinese-poetry/纳兰性德/纳兰性德诗集.json';
-    const pathPoem = '../chinese-poetry/全唐诗/唐诗三百首.json';
+export async function insertData(db: SQLiteDatabase, lst: any[], tags: string[]) {
+    await new Promise<void>((resolve, reject) => {
+        db.transaction((tx) => {
+            for (let i = 0; i < lst.length; i++) {
+                console.log(`add poet ${i} ${lst[i].toString()}`);
+                tx.executeSql("INSERT INTO Poems VALUES (?, ?, ?, ?, ?, ?)", [i, ...lst[i].getTuple()]);
 
-    console.log("dir", RNFS.readDir('./'));
+                for (let tag of lst[i].getTags()) {
+                    if (tags.indexOf(tag) === -1) {
+                        console.log(`add tag ${tag}`);
+                        tags.push(tag);
+                        tx.executeSql("INSERT INTO Tags VALUES (?, ?)", [tags.length, tag]);
+                    }
+                    console.log(`add poet ${i} tag ${tag}`);
+                    tx.executeSql("INSERT INTO Poet_Tags VALUES (?, ?)", [i, tags.indexOf(tag) + 1]);
+                }
+            }
+        }, (e) => {
+            console.log('transaction error: ', e);
+            reject(e);
+        }, () => {
+            console.log('insert data : ', 'Poems, Tags, Poet_Tags inserted successfully');
+            resolve();
+        });
+    });
 
+    await new Promise<void>((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql("SELECT * FROM Poems", [], (_, { rows }) =>
+                console.log(`poems: ${rows.length}`)
+            );
+            tx.executeSql("SELECT * FROM Tags", [], (_, { rows }) =>
+                console.log(`tags: ${rows.length}`)
+            );
+            tx.executeSql("SELECT * FROM Poet_Tags", [], (_, { rows }) =>
+                console.log(`poet_tags: ${rows.length}`)
+            );
+        }, (e) => {
+            console.log('transaction error: ', e);
+            reject(e);
+        }, () => {
+            resolve();
+        });
+    });
+
+    console.log(`载入${lst.length}条记录`);
+}
+
+export async function readPoems(db: SQLiteDatabase) {
     let ci: Ci[] = [], shijing: ShiJing[] = [], nalan: Nalan[] = [], poem: Poem[] = [];
 
-    if (await RNFS.exists(pathCi)) {
-        ci = await handleCi(pathCi);
-    } else {
-        console.log(`path ${pathCi} not exists`);
-    }
-
-    if (await RNFS.exists(pathShijing)) {
-        shijing = await handleShijing(pathShijing);
-    } else {
-        console.log(`path ${pathShijing} not exists`);
-    }
-
-    if (await RNFS.exists(pathNalan)) {
-        nalan = await handleNalan(pathNalan);
-    } else {
-        console.log(`path ${pathNalan} not exists`);
-    }
-
-    if (await RNFS.exists(pathPoem)) {
-        poem = await handlePoem(pathPoem);
-    } else {
-        console.log(`path ${pathPoem} not exists`);
-    }
+    ci = await handleCi();
+    shijing = await handleShijing();
+    nalan = await handleNalan();
+    poem = await handlePoem();
 
     const lst = [...ci, ...shijing, ...nalan, ...poem];
-    const tags = [];
+    const tags: any[] = [];
 
-    // ...
+    await insertData(db, lst, tags);
 }
