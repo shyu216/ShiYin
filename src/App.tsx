@@ -1,7 +1,7 @@
 import React from 'react';
 import { Animated, StatusBar, StyleSheet, View } from 'react-native';
-// import Home from './components/Home';
-import Home from './components/Cao';
+import Home from './components/Home';
+// import Home from './components/Cao';
 
 class App extends React.Component {
   animatedValue = new Animated.Value(0);

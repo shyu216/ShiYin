@@ -4,7 +4,7 @@ import { readPoems } from './PoetryReader';
 let db: SQLiteDatabase | null = null;
 
 
-export const initDatabase = async (): Promise<void> => {
+export const initDatabase = async (): Promise<string> => {
   if (db) {
     // check if the poetry is already in the database
     // if not, insert
@@ -22,20 +22,22 @@ export const initDatabase = async (): Promise<void> => {
               }
             }, (e) => {
               console.log('transaction error: ', e);
-              reject(e);
+              resolve(true);
             });
           }, (e) => {
             console.log('transaction error: ', e);
-            reject(e);
+            resolve(true);
           });
         } else {
-          reject("Database not opened");
+          console.log("Database not opened");
+          resolve(false);
         }
       });
     }
 
     // 使用
     const is_empty = await checkIfEmpty();
+    console.log("is_empty: ", is_empty);
 
     if (is_empty) {
       db.transaction((tx) => {
@@ -73,6 +75,7 @@ export const initDatabase = async (): Promise<void> => {
       });
 
       await readPoems(db);
+      return "Poems inserted";
     } else {
       console.log("Poems is not empty, no need to insert");
       db.transaction((tx) => {
@@ -91,22 +94,29 @@ export const initDatabase = async (): Promise<void> => {
         console.log('database : ', 'Poems, Tags, Poet_Tags created successfully');
       });
     }
+    return "Poems is not empty, no need to insert";
   } else {
     console.log("Database not opened");
+    return "Database not opened";
   }
 }
 
 
-export const openDatabase = (): void => {
-  if (db) {
-    console.log("Database already opened");
-  } else {
-    db = SQLite.openDatabase({ name: 'MainDB', createFromLocation: 1 }, () => {
-      console.log("Database opened");
-    }, (e) => {
-      console.log("Database open error", e);
-    });
-  }
+export const openDatabase = (): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (db) {
+      console.log("Database already opened");
+      resolve("Database already opened");
+    } else {
+      db = SQLite.openDatabase({ name: 'MainDB' }, () => {
+        console.log("Database opened");
+        resolve("Database opened");
+      }, (e) => {
+        console.log("Database open error", e);
+        reject(e);
+      });
+    }
+  });
 }
 
 export const executeSql = (sql: string, params: any[] = []): Promise<ResultSet> => new Promise((resolve, reject) => {

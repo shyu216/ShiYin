@@ -28,19 +28,25 @@ const usePoemWithTags = () => {
         }
     }, []);
 
+    const [log, setLog] = useState<string>();
     useEffect(() => {
-        openDatabase();
-        initDatabase();
-        fetchPoemWithTags();
+        const init = async () => {
+            const openResult = await openDatabase();
+            setLog(openResult);
+            const initResult = await initDatabase();
+            setLog(initResult);
+            await fetchPoemWithTags();
+        };
+        init();
     }, [fetchPoemWithTags]);
 
-    return { poem, tags, loading, fetchPoemWithTags };
+    return { poem, tags, log, loading, fetchPoemWithTags };
 };
 
 
 
 const PoemComponent: React.FC = () => {
-    const { poem, tags, fetchPoemWithTags } = usePoemWithTags();
+    const { poem, tags, log, loading, fetchPoemWithTags } = usePoemWithTags();
 
 
     return (
