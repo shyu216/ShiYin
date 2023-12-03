@@ -101,7 +101,7 @@ export const openDatabase = (): void => {
   if (db) {
     console.log("Database already opened");
   } else {
-    db = SQLite.openDatabase({ name: 'poetry.db', createFromLocation: 1 }, () => {
+    db = SQLite.openDatabase({ name: 'MainDB', createFromLocation: 1 }, () => {
       console.log("Database opened");
     }, (e) => {
       console.log("Database open error", e);
