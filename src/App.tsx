@@ -1,6 +1,7 @@
 import React from 'react';
 import { Animated, StatusBar, StyleSheet, View } from 'react-native';
 import Home from './components/Home';
+import StackDemo from './components/StackDemo';
 // import Home from './components/Cao';
 
 class App extends React.Component {
@@ -30,9 +31,8 @@ class App extends React.Component {
     return (
       <Animated.View style={{ ...styles.page, backgroundColor }}>
         <StatusBar backgroundColor="transparent" barStyle="light-content" translucent={true} />
-        <View style={styles.container}>
-          <Home />
-        </View>
+        <Home />
+        {/* <StackDemo /> */}
       </Animated.View>
     );
   }
@@ -43,18 +43,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-
-  container: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10, // 设置圆角的半径
-    overflow: 'hidden', // 确保子组件不会溢出圆角边界
-    margin: 100,
-    padding: 10,
-
-    width: 300,
-    height: 600,
-  },
+  }
 });
 
 export default App;
