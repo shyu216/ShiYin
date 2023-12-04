@@ -1,0 +1,5 @@
+/src/assets/chinese-poetry/*
+!/src/assets/chinese-poetry/宋词/宋词三百首.json
+!/src/assets/chinese-poetry/诗经/shijing.json
+!/src/assets/chinese-poetry/纳兰性德/纳兰性德诗集.json
+!/src/assets/chinese-poetry/全唐诗/唐诗三百首.json

@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, View, Text, StyleSheet, FlatList, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ScrollView, TouchableOpacity } from 'react-native';
 import { openDatabase, executeSql, initDatabase } from '../utils/SQLiteHelper';
-import { BounceIn, FadeOut } from 'react-native-reanimated';
-import Animated from 'react-native-reanimated';
+import Animated, { BounceIn, BounceInRight, FadeOut, FadeOutRight, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import Loading from './Loader';
 import Icon from 'react-native-vector-icons/Fontisto'; // FontAwesome is an example, use the icon set that contains your icon
 import Icon6 from 'react-native-vector-icons/FontAwesome6';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useQueue from '../utils/queue';
 import useStack from '../utils/stack';
-
+import { Badge, Button } from '@rneui/themed';
+import LinearGradient from 'react-native-linear-gradient';
 
 const usePoem = () => {
     const [poem, setPoem] = useState<any>();
@@ -22,6 +22,7 @@ const usePoem = () => {
         console.log('fetchRdmPoem');
         setLoading(true);
         try {
+            setTags([]);
             if (poem) {
                 await push(poem.id);
             }
@@ -48,6 +49,7 @@ const usePoem = () => {
         console.log('fetchOldPoem');
         setLoading(true);
         try {
+            setTags([]);
             const popedPoemId = await pop();
 
             if (!popedPoemId) {
@@ -109,43 +111,107 @@ const PoemComponent: React.FC = () => {
         fetchRdmPoem();
     }, []);
 
+    const rotate = useSharedValue(0);
+
+    const rotateStyles = useAnimatedStyle(() => {
+        return {
+            transform: [{ rotate: `${rotate.value}deg` }],
+        };
+    });
+
+    const rotateAndFetch = () => {
+        rotate.value = withTiming(rotate.value + 360, { duration: 1000 });
+        fetchRdmPoem();
+    };
+
+    const scale = useSharedValue(1);
+
+    const scaleStyles = useAnimatedStyle(() => {
+        return {
+            transform: [{ scale: scale.value }],
+        };
+    });
+
+    const scaleAndFetch = () => {
+        scale.value = withSpring(0.5, {}, () => {
+            scale.value = withSpring(1);
+        });
+        fetchOldPoem();
+    };
+
+    const [showTag, setShowTag] = useState(false);
+
     return (
         <>
             {log && <Text>{log}</Text>}
 
             {loading ? <Loading /> :
-                <Animated.View entering={BounceIn} exiting={FadeOut} >
-
+                <Animated.View entering={BounceIn.delay(100)} exiting={FadeOut} >
                     <View style={styles.container}>
-                        <ScrollView>
-                            <Text>Poem</Text>
+                        <ScrollView contentContainerStyle={{ alignItems: 'center', minHeight: "100%" }}>
                             {poem && <>
-                                <Text>{poem.id}</Text>
-                                <Text>{poem.title}</Text>
-                                {poem.author && <Text>{poem.author}</Text>}
-                                {poem.chapter && poem.section && <Text>{poem.chapter} {poem.section}</Text>}
-                                <Text>{poem.content}</Text>
+
+                                <Text style={{ fontSize: 22 }}>{poem.title}</Text>
+                                {poem.author && <Text style={{ fontSize: 20 }}>{poem.author}</Text>}
+                                {poem.chapter && poem.section && <Text style={{ fontSize: 18 }}>{poem.chapter} {poem.section}</Text>}
+                                <Text style={{ fontSize: 16 }}>{poem.content}</Text>
+                                <Text style={styles.poemId}>{poem.id}</Text>
                             </>}
+
                         </ScrollView>
 
-                        <FlatList
-                            data={tags}
-                            renderItem={({ item: tag, index }) => (
-                                <View style={styles.item} key={index}>
-                                    <Text>{tag.tag}</Text>
-                                </View>
-                            )}
-                            keyExtractor={(item, index) => index.toString()}
-                        />
+
                     </View>
                 </Animated.View>}
 
-            <TouchableOpacity style={styles.backwardButton} onPress={fetchOldPoem}>
-                <Icon6 name="backward-step" size={48} color="rgb(255, 127, 80)" />
+            {showTag && <>
+
+                <View style={styles.tags} >
+                    {tags.map((tag, index) => (<Animated.View entering={BounceInRight.delay(100 * index)} exiting={FadeOutRight.delay(100 * index)} style={styles.item} key={index}>
+                        <View >
+                            <Button
+                                ViewComponent={LinearGradient} // Don't forget this!
+                                linearGradientProps={{
+                                    colors: ["#FF9800", "#F44336"],
+                                    start: { x: 0, y: 0.5 },
+                                    end: { x: 1, y: 0.5 },
+                                }}
+                                buttonStyle={{
+                                    borderColor: 'transparent',
+                                    borderWidth: 0,
+                                    borderRadius: 30,
+                                }}
+                                containerStyle={{
+                                    marginHorizontal: 0,
+                                    marginVertical: 0,
+                                }}
+                            >
+                                {tag.tag}
+                            </Button>
+                        </View>
+                    </Animated.View>
+                    ))}
+                </View>
+
+            </>}
+
+            <TouchableOpacity style={styles.tagButton} onPress={() => { setShowTag(!showTag) }}>
+                <Animated.View style={scaleStyles}>
+                    <Icon6 name="tags" size={48} color="rgb(255, 127, 80)" />
+                </Animated.View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.refreshButton} onPress={fetchRdmPoem}>
-                <Icon name="spinner-refresh" size={48} color="rgb(255, 127, 80)" />
+
+            <TouchableOpacity style={styles.backwardButton} onPress={scaleAndFetch}>
+                <Animated.View style={scaleStyles}>
+                    <Icon6 name="backward-step" size={48} color="rgb(255, 127, 80)" />
+                </Animated.View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.refreshButton} onPress={rotateAndFetch}>
+                <Animated.View style={rotateStyles}>
+                    <Icon name="spinner-refresh" size={48} color="rgb(255, 127, 80)" />
+                </Animated.View>
             </TouchableOpacity>
         </>
     );
@@ -157,14 +223,18 @@ const styles = StyleSheet.create({
     },
 
     container: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#EFEFEF',
         borderRadius: 10, // 设置圆角的半径
         overflow: 'hidden', // 确保子组件不会溢出圆角边界
         margin: 100,
         padding: 10,
+        // position: 'relative',
 
-        width: 300,
-        height: 600,
+        width: '80%',
+        height: '70%',
+        minWidth: '80%', // Set minWidth as a percentage
+        minHeight: '70%', // Set minHeight as a percentage
+
     },
 
     refreshButton: {
@@ -178,6 +248,26 @@ const styles = StyleSheet.create({
         left: 20,
         bottom: 20,
     },
+
+    tags: {
+        position: 'absolute',
+        right: 20,
+        top: 100,
+    },
+
+    tagButton: {
+        position: 'absolute',
+        right: 20,
+        top: 40,
+    },
+
+    poemId: {
+        fontSize: 12,
+        position: 'absolute',
+        bottom: 5,
+        textAlign: 'center', // Add this line
+        width: '100%', // Add this line
+    }
 });
 
 export default PoemComponent;
