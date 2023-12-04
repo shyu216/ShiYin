@@ -1,8 +1,12 @@
 import React from 'react';
 import { Animated, StatusBar, StyleSheet, View } from 'react-native';
 import Home from './components/Home';
-import StackDemo from './components/StackDemo';
-// import Home from './components/Cao';
+import Cao from './components/Cao';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+
+
+const Stack = createStackNavigator();
 
 class App extends React.Component {
   animatedValue = new Animated.Value(0);
@@ -31,8 +35,13 @@ class App extends React.Component {
     return (
       <Animated.View style={{ ...styles.page, backgroundColor }}>
         <StatusBar backgroundColor="transparent" barStyle="light-content" translucent={true} />
+        {/* <NavigationContainer>
+              <Stack.Navigator initialRouteName="Home">
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Cao" component={Cao} />
+              </Stack.Navigator>
+            </NavigationContainer> */}
         <Home />
-        {/* <StackDemo /> */}
       </Animated.View>
     );
   }

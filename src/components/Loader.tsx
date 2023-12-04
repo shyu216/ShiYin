@@ -1,38 +1,49 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import Animated, {
+  useFrameCallback,
+  useSharedValue,
+  useAnimatedStyle,
+} from 'react-native-reanimated';
 
-const Loading = () => {
-  const rotation = useSharedValue(0);
+export default function App() {
+  const t = useSharedValue(0);
 
-  const animatedStyles = useAnimatedStyle(() => {
+  // highlight-start
+  useFrameCallback((frameInfo) => {
+    t.value = frameInfo.timeSinceFirstFrame / 350;
+  });
+  // highlight-end
+
+  const infinityStyle = useAnimatedStyle(() => {
+    const scale = (2 / (3 - Math.cos(2 * t.value))) * 60;
     return {
-      transform: [{ rotateZ: `${rotation.value}deg` }]
+      transform: [
+        { translateX: scale * Math.cos(t.value) },
+        { translateY: scale * (Math.sin(2 * t.value) / 2) },
+      ],
     };
   });
 
-  useEffect(() => {
-    rotation.value = withRepeat(withTiming(360, { duration: 2000, easing: Easing.linear }), -1);
-  }, []);
-
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.box, animatedStyles]} />
+      <Animated.View style={[styles.dot, infinityStyle]} />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    height: 50,
   },
-  box: {
-    width: 100,
-    height: 100,
-    backgroundColor: 'tomato',
+  dot: {
+    width: 20,
+    height: 20,
+    borderRadius: 20,
+    backgroundColor: '#b58df1',
+    position: 'absolute',
   },
 });
-
-export default Loading;
