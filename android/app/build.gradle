@@ -73,9 +73,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.triplehanhan"
+    namespace "com.ShiYin"
     defaultConfig {
-        applicationId "com.triplehanhan"
+        applicationId "com.ShiYin"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

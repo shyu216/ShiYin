@@ -1,4 +1,4 @@
-package com.triplehanhan;
+package com.ShiYin;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "TripleHanHan.app"
-               BlueprintName = "TripleHanHan"
-               ReferencedContainer = "container:TripleHanHan.xcodeproj">
+               BuildableName = "ShiYin.app"
+               BlueprintName = "ShiYin"
+               ReferencedContainer = "container:ShiYin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "TripleHanHanTests.xctest"
-               BlueprintName = "TripleHanHanTests"
-               ReferencedContainer = "container:TripleHanHan.xcodeproj">
+               BuildableName = "ShiYinTests.xctest"
+               BlueprintName = "ShiYinTests"
+               ReferencedContainer = "container:ShiYin.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "TripleHanHan.app"
-            BlueprintName = "TripleHanHan"
-            ReferencedContainer = "container:TripleHanHan.xcodeproj">
+            BuildableName = "ShiYin.app"
+            BlueprintName = "ShiYin"
+            ReferencedContainer = "container:ShiYin.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "TripleHanHan.app"
-            BlueprintName = "TripleHanHan"
-            ReferencedContainer = "container:TripleHanHan.xcodeproj">
+            BuildableName = "ShiYin.app"
+            BlueprintName = "ShiYin"
+            ReferencedContainer = "container:ShiYin.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
