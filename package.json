@@ -19,7 +19,7 @@
     "@rneui/themed": "^4.0.0-rc.8",
     "express": "^4.18.2",
     "react": "18.2.0",
-    "react-native": "0.72.4",
+    "react-native": "0.73.0",
     "react-native-eject": "^0.2.0",
     "react-native-gesture-handler": "^2.13.1",
     "react-native-gifted-chat": "^2.4.0",
