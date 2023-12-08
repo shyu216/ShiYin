@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, ViewStyle, StyleProp } from 'react-native';
-import Icon6 from 'react-native-vector-icons/FontAwesome6';
+import Icon from 'react-native-vector-icons/FontAwesome6';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from 'react-native-reanimated';
 
 
@@ -33,7 +33,7 @@ const RefreshBtn: React.FC<RefreshBtnProps> = ({ setIsFetchNew, fetchRdmPoem, st
     return (
         <TouchableOpacity style={style} onPress={rotateAndFetch}>
             {/* <Animated.View style={rotateStyles}> */}
-                <Icon6 name="angles-right" size={44} color={color} />
+                <Icon name="angles-right" size={44} color={color} />
             {/* </Animated.View> */}
         </TouchableOpacity>
     );

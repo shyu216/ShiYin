@@ -26,6 +26,6 @@ yarn install
 yarn start
 
 // in another terminal
-yarn android
+./gradlew clean
 
 ```

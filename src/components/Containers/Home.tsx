@@ -7,7 +7,7 @@ import usePoem from '../../utils/hooks/poem';
 import RefreshBtn from '../UI/Home/RefreshBtn';
 import GoBkBtn from '../UI/Home/GoBkBtn';
 import TagButtons from '../UI/Home/TagBtns';
-import Speaker from '../UI/Home/Speaker';
+// import Speaker from '../UI/Home/Speaker';
 
 
 
@@ -88,6 +88,11 @@ const PoemComponent: React.FC = () => {
                         isFetchNew ? FadeOutLeft : FadeOutRight
                     } >
                         <View style={styles.container}>
+                            <Image
+                                source={require('../../assets/images/bg4.png')}
+                                style={styles.bgImage}
+                            />
+
                             <ScrollView contentContainerStyle={{ alignItems: 'center', minHeight: "100%" }}>
                                 {poem && <>
 
@@ -100,14 +105,10 @@ const PoemComponent: React.FC = () => {
 
                             </ScrollView>
 
-                            <Image
-                                source={require('../../assets/images/bg4.png')}
-                                style={styles.bgImage}
-                            />
                         </View>
                     </Animated.View>}
 
-                <Speaker content={poem?.content ?? ''} style={styles.speakerButton} setLog={setLog} />
+                {/* <Speaker content={poem?.content ?? ''} style={styles.speakerButton} setLog={setLog} /> */}
                 <TagButtons tags={tags} style={styles.tagButton} color={colors.btn1} />
                 <GoBkBtn setIsFetchNew={setIsFetchNew} fetchOldPoem={fetchOldPoem} style={styles.backwardButton} color={colors.btn1} />
                 <RefreshBtn setIsFetchNew={setIsFetchNew} fetchRdmPoem={fetchRdmPoem} style={styles.refreshButton} color={colors.btn1} />

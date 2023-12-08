@@ -3,7 +3,7 @@ import { TouchableOpacity, Animated, StyleProp, ViewStyle } from 'react-native';
 import Tts from 'react-native-tts';
 import { Easing } from 'react-native-reanimated';
 import { useSharedValue, withSpring, withTiming, withSequence, withRepeat, useAnimatedStyle } from 'react-native-reanimated';
-import Icon6 from 'react-native-vector-icons/FontAwesome6'; // Assuming you're using FontAwesome. Replace with your actual icon library.
+import Icon from 'react-native-vector-icons/FontAwesome6'; // Assuming you're using FontAwesome. Replace with your actual icon library.
 import styles from '../../Containers/Home'; // Assuming you have a styles.js file. Replace with your actual style file.
 import colors from '../../../utils/settings/colors'; // Assuming you have a colors.js file. Replace with your actual color file.
 
@@ -98,7 +98,7 @@ const Speaker: React.FC<SpeakerProps> = ({ content, style, setLog }) => {
     return (
         <TouchableOpacity style={style} onPress={speakerOnPress}>
             {/* <Animated.View style={speakerStyles}> */}
-                <Icon6 name="headphones" size={38} color={colors.btn1} />
+                <Icon name="headphones" size={38} color={colors.btn1} />
             {/* </Animated.View> */}
         </TouchableOpacity>
     );
