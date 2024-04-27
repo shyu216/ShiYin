@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, FadeIn, BounceInRight, FadeOutRight } from 'react-native-reanimated';
+// import Animated, { useSharedValue, useAnimatedStyle, withTiming, FadeIn, BounceInRight, FadeOutRight } from 'react-native-reanimated';
 import React from 'react';
 import { TouchableOpacity, ViewStyle, StyleProp, View } from 'react-native';
 import IconMC from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -17,16 +17,16 @@ interface TagButtonsProps {
 
 const TagButtons: React.FC<TagButtonsProps> = ({ tags, style, color }) => {
     const [showTag, setShowTag] = useState(false);
-    const tagAniValue = useSharedValue(0);
+    // const tagAniValue = useSharedValue(0);
 
-    const tagAniStyles = useAnimatedStyle(() => {
-        return {
-            transform: [{ translateX: tagAniValue.value }],
-        };
-    });
+    // const tagAniStyles = useAnimatedStyle(() => {
+    //     return {
+    //         transform: [{ translateX: tagAniValue.value }],
+    //     };
+    // });
 
     const tagOnPress = () => {
-        tagAniValue.value = withTiming(tagAniValue.value === 0 ? 100 : 0, { duration: 1000 });
+        // tagAniValue.value = withTiming(tagAniValue.value === 0 ? 100 : 0, { duration: 1000 });
         setShowTag(!showTag);
     };
 
@@ -36,9 +36,9 @@ const TagButtons: React.FC<TagButtonsProps> = ({ tags, style, color }) => {
                 <TouchableOpacity style={{
                     position: 'relative',
                 }} onPress={tagOnPress}>
-                    <Animated.View style={tagAniStyles}>
+                    {/* <Animated.View style={tagAniStyles}> */}
                         <IconMC name="tag-multiple-outline" size={54} color={color} />
-                    </Animated.View>
+                    {/* </Animated.View> */}
                 </TouchableOpacity>
                 <TouchableOpacity style={{
                     position: 'absolute',
@@ -46,9 +46,9 @@ const TagButtons: React.FC<TagButtonsProps> = ({ tags, style, color }) => {
                     top: 10,
                 }} onPress={tagOnPress}>
                     {showTag && (
-                        <Animated.View entering={FadeIn.delay(600)}>
+                        // <Animated.View entering={FadeIn.delay(600)}>
                             <IconA name="closecircleo" size={36} color={color} />
-                        </Animated.View>
+                        // </Animated.View>
                     )}
                 </TouchableOpacity>
                 {showTag &&
@@ -59,9 +59,9 @@ const TagButtons: React.FC<TagButtonsProps> = ({ tags, style, color }) => {
                     }} >
 
                         {tags.map((tag, index) => (
-                            <Animated.View entering={BounceInRight.delay(100 * index)} exiting={FadeOutRight.delay(100 * index)} style={{
-                                marginBottom: 10, // Adjust this value as needed
-                            }} key={index}>
+                            // <Animated.View entering={BounceInRight.delay(100 * index)} exiting={FadeOutRight.delay(100 * index)} style={{
+                            //     marginBottom: 10, // Adjust this value as needed
+                            // }} key={index}>
                                 <Button style={{
                                     width: 100
                                 }}
@@ -83,7 +83,7 @@ const TagButtons: React.FC<TagButtonsProps> = ({ tags, style, color }) => {
                                 >
                                     {tag.tag}
                                 </Button>
-                            </Animated.View>
+                            // </Animated.View>
                         ))}
                     </View>
                 }

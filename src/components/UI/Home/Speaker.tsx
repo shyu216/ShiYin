@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, Animated, StyleProp, ViewStyle } from 'react-native';
 import Tts from 'react-native-tts';
 import { Easing } from 'react-native-reanimated';
-import { useSharedValue, withSpring, withTiming, withSequence, withRepeat, useAnimatedStyle } from 'react-native-reanimated';
+// import { useSharedValue, withSpring, withTiming, withSequence, withRepeat, useAnimatedStyle } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/FontAwesome6'; // Assuming you're using FontAwesome. Replace with your actual icon library.
-import styles from '../../Containers/Home'; // Assuming you have a styles.js file. Replace with your actual style file.
+import styles from '../../Containers/Card'; // Assuming you have a styles.js file. Replace with your actual style file.
 import colors from '../../../utils/settings/colors'; // Assuming you have a colors.js file. Replace with your actual color file.
 
 
@@ -50,7 +50,7 @@ const Speaker: React.FC<SpeakerProps> = ({ content, style, setLog }) => {
     const stop = () => {
         Tts.stop();
     }
-    const speakValue2 = useSharedValue(0);
+    // const speakValue2 = useSharedValue(0);
     const [speaking, setSpeaking] = useState(false);
     // useEffect(() => {
     //     if (speaking) {
