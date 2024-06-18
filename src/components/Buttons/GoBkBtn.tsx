@@ -1,7 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, ViewStyle, StyleProp } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome6';
-// import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from 'react-native-reanimated';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface GoBkBtnProps {
     setIsFetchNew: (value: boolean) => void;
@@ -11,13 +10,6 @@ interface GoBkBtnProps {
 }
 
 const GoBkBtn: React.FC<GoBkBtnProps> = ({ setIsFetchNew, fetchOldPoem, style, color }) => {
-    // const rotate = useSharedValue(0);
-
-    // const rotateStyles = useAnimatedStyle(() => {
-    //     return {
-    //         transform: [{ rotate: `${rotate.value * 360}deg` }],
-    //     };
-    // });
 
     const rotateAndFetch = () => {
         setIsFetchNew(false);
@@ -31,9 +23,7 @@ const GoBkBtn: React.FC<GoBkBtnProps> = ({ setIsFetchNew, fetchOldPoem, style, c
 
     return (
         <TouchableOpacity style={style} onPress={rotateAndFetch}>
-            {/* <Animated.View style={rotateStyles}> */}
-                <Icon name="angles-left" size={44} color={color} />
-            {/* </Animated.View> */}
+                <Icon name="arrow-left-bold-circle-outline" size={44} color={color} />
         </TouchableOpacity>
     );
 };
