@@ -10,7 +10,7 @@
 
 # 截图
 
-<img src="./snapshots/Screenshot_1718691787.png" width="300">
+<img src="./snapshots/Screenshot_20240917_235234.png" width="300">
 
 # 部署
 
