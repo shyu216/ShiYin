@@ -3,41 +3,40 @@ import { readPoems } from './PoetryReader';
 
 let db: SQLiteDatabase | null = null;
 
+const log = (message: string, ...optionalParams: any[]) => {
+  console.log(`[SQLiteHelper] ${message}`, ...optionalParams);
+};
 
 export const initDatabase = async (): Promise<string> => {
   if (db) {
-    // check if the poetry is already in the database
-    // if not, insert
     const checkIfEmpty = () => {
       return new Promise((resolve, reject) => {
         if (db) {
           db.transaction((tx) => {
             tx.executeSql("SELECT * FROM Poems", [], (_, { rows }) => {
               if (rows.length === 0) {
-                console.log("Poems is empty");
+                log("Poems is empty");
                 resolve(true);
               } else {
-                console.log("Poems is not empty");
+                log("Poems is not empty");
                 resolve(false);
               }
             }, (e) => {
-              console.log('transaction error: ', e);
+              log('Transaction error: ', e);
               resolve(true);
             });
           }, (e) => {
-            console.log('transaction error: ', e);
+            log('Transaction error: ', e);
             resolve(true);
           });
         } else {
-          console.log("Database not opened");
+          log("Database not opened");
           resolve(false);
         }
       });
     }
 
-    // 使用
     const is_empty = await checkIfEmpty();
-    console.log("is_empty: ", is_empty);
 
     if (is_empty) {
       db.transaction((tx) => {
@@ -69,50 +68,49 @@ export const initDatabase = async (): Promise<string> => {
           );`
         );
       }, (e) => {
-        console.log('transaction error: ', e);
+        log('Transaction error: ', e);
       }, () => {
-        console.log('database : ', 'Poems, Tags, Poet_Tags created successfully');
+        
       });
 
       await readPoems(db);
       return "Poems inserted";
     } else {
-      console.log("Poems is not empty, no need to insert");
+      log("Poems is not empty, no need to insert");
       db.transaction((tx) => {
         tx.executeSql("SELECT * FROM Poems", [], (_, { rows }) => {
-          console.log("Poems: ", rows.length);
+          log("Poems: ", rows.length);
         });
         tx.executeSql("SELECT * FROM Tags", [], (_, { rows }) => {
-          console.log("Tags: ", rows.length);
+          log("Tags: ", rows.length);
         });
         tx.executeSql("SELECT * FROM Poet_Tags", [], (_, { rows }) => {
-          console.log("Poet_Tags: ", rows.length);
+          log("Poet_Tags: ", rows.length);
         });
       }, (e) => {
-        console.log('transaction error: ', e);
+        log('Transaction error: ', e);
       }, () => {
-        console.log('database : ', 'Poems, Tags, Poet_Tags created successfully');
+        log('Database created successfully');
       });
     }
     return "Poems is not empty, no need to insert";
   } else {
-    console.log("Database not opened");
+    log("Database not opened");
     return "Database not opened";
   }
 }
 
-
 export const openDatabase = (): Promise<string> => {
   return new Promise((resolve, reject) => {
     if (db) {
-      console.log("Database already opened");
+      log("Database already opened");
       resolve("Database already opened");
     } else {
       db = SQLite.openDatabase({ name: 'MainDB' }, () => {
-        console.log("Database opened");
+        log("Database opened");
         resolve("Database opened");
       }, (e) => {
-        console.log("Database open error", e);
+        log("Database open error", e);
         reject(e);
       });
     }
@@ -120,7 +118,7 @@ export const openDatabase = (): Promise<string> => {
 }
 
 export const executeSql = (sql: string, params: any[] = []): Promise<ResultSet> => new Promise((resolve, reject) => {
-  console.log("executeSql", sql, params);
+  log("Execute", sql, params);
   if (db) {
     db.transaction((trans) => {
       trans.executeSql(sql, params, (trans, results) => {
@@ -139,8 +137,9 @@ export const closeDatabase = (): void => {
   if (db) {
     db.close();
     db = null;
+    log("Database closed");
   } else {
-    console.log("Database was not OPENED");
+    log("Database was not opened");
   }
 };
 
@@ -151,12 +150,12 @@ export const clearDatabase = (): void => {
       tx.executeSql("DROP TABLE IF EXISTS Tags");
       tx.executeSql("DROP TABLE IF EXISTS Poet_Tags");
     }, (e) => {
-      console.log('transaction error: ', e);
+      log('Transaction error: ', e);
     }, () => {
-      console.log('database : ', 'Poems, Tags, Poet_Tags dropped successfully');
+      log('Database dropped successfully');
     });
-    console.log("Database cleared");
+    log("Database cleared");
   } else {
-    console.log("Database was not OPENED");
+    log("Database was not opened");
   }
 }

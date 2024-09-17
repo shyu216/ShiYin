@@ -99,7 +99,6 @@ function processParagraphs(paragraphs: string[]): string {
     return paragraphs.join('\n');
 }
 
-
 import ci from './../assets/chinese-poetry/宋词/宋词三百首.json';
 import shijing from './../assets/chinese-poetry/诗经/shijing.json';
 import nalan from './../assets/chinese-poetry/纳兰性德/纳兰性德诗集.json';
@@ -163,16 +162,13 @@ export async function insertData(db: SQLiteDatabase, lst: any[], tags: string[])
     await new Promise<void>((resolve, reject) => {
         db.transaction((tx) => {
             for (let i = 0; i < lst.length; i++) {
-                console.log(`add poet ${i} ${lst[i].toString()}`);
                 tx.executeSql("INSERT INTO Poems VALUES (?, ?, ?, ?, ?, ?)", [i, ...lst[i].getTuple()]);
 
                 for (let tag of lst[i].getTags()) {
                     if (tags.indexOf(tag) === -1) {
-                        console.log(`add tag ${tag}`);
                         tags.push(tag);
                         tx.executeSql("INSERT INTO Tags VALUES (?, ?)", [tags.length, tag]);
                     }
-                    console.log(`add poet ${i} tag ${tag}`);
                     tx.executeSql("INSERT INTO Poet_Tags VALUES (?, ?)", [i, tags.indexOf(tag) + 1]);
                 }
             }
@@ -180,7 +176,6 @@ export async function insertData(db: SQLiteDatabase, lst: any[], tags: string[])
             console.log('transaction error: ', e);
             reject(e);
         }, () => {
-            console.log('insert data : ', 'Poems, Tags, Poet_Tags inserted successfully');
             resolve();
         });
     });
@@ -203,8 +198,6 @@ export async function insertData(db: SQLiteDatabase, lst: any[], tags: string[])
             resolve();
         });
     });
-
-    console.log(`载入${lst.length}条记录`);
 }
 
 export async function readPoems(db: SQLiteDatabase) {
